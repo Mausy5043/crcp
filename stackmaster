@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Assumed hierarchy
+# ..
+#  |
+#  + sql
+#  | - stack
+#  |
+#  + bin
+#    - check
+#    - claim
+#    - myip
+#    - release
+#    - stackmaster <-(we are here)
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TRUNK="$( dirname "${DIR}" )"
+stack="${TRUNK}/sql/stack"
+
+if [[ -f "${stack}" ]]; then
+  # Did we just reboot?
+  if [[ $1 = "-r" ]]; then
+    rm "${stack}"
+    exit 0
+  fi
+  # Ping the top host in the stack
+  stacktop=$(head --lines=1 "${stack}")
+  iplen="${#stacktop}"
+  if [ "${#stacktop}" -ge "7" ]; then
+    ping -c1 "${stacktop}" &2>1 >/dev/null
+    result=$(echo $?)
+  else
+    result=2
+  fi
+  # If it doesn't respond remove it from the stack
+  if [ "${result}" -ne "0" ]; then
+    sed -i '1d' "${stack}"
+  fi
+else
+  # echo "${stack} does not exist"
+  exit 1
+fi

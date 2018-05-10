@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Assumed hierarchy
+# ..
+#  |
+#  + sql
+#  | - stack
+#  |
+#  + bin
+#    - check
+#    - claim  <-(we are here)
+#    - myip
+#    - release
+#    - stackmaster
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TRUNK="$( dirname "${DIR}" )"
+stack="${TRUNK}/sql/stack"
+MYIP="$(${DIR}/myip)"
+
+echo $("${DIR}/myip") >> "${stack}"
+
+echo 0

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# remove any line containing the clients IP-address from the stack-file
+
+# Assumed hierarchy
+# ..
+#  |
+#  + sql
+#  | - stack
+#  |
+#  + bin
+#    - check
+#    - claim
+#    - myip
+#    - release <-(we are here)
+#    - stackmaster
+
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TRUNK="$( dirname "${DIR}" )"
+stack="${TRUNK}/sql/stack"
+MYIP="$(${DIR}/myip)"
+
+regexMYIP="${MYIP//./\\.}"
+
+# because `sed` doesn't play nice:
+ex +g/"${regexMYIP}"/d -cwq "${stack}"
+
+echo 0

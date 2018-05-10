@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Assumed hierarchy
+# ..
+#  |
+#  + sql
+#  | - stack
+#  |
+#  + bin
+#    - check  <-(we are here)
+#    - claim
+#    - myip
+#    - release
+#    - stackmaster
+
+# Will return position in the stack or 0 if we're not on it.
+# 1 = top of the stack
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TRUNK="$( dirname "${DIR}" )"
+stack="${TRUNK}/sql/stack"
+MYIP="$(${DIR}/myip)"
+
+# Check if we are (still) on the stack
+stackpos=$(grep $MYIP $stack |wc -l)
+# Check if we are at the top of the stack
+stacktop=$(head --lines=1 "${stack}")
+if [ "${stacktop}" == "${MYIP}" ]; then
+  echo 1
+  # echo "We are at the top of the stack. Go do some stuff!"
+  exit 0
+else
+  echo "${stackpos}"
+  # echo "We're not at the top of the stack"
+  exit 0
+fi
+
+# Oh bother!
+exit 1
